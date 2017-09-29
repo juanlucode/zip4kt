@@ -17,63 +17,27 @@ import java.util.zip.ZipOutputStream
  */
 class Zip {
 
-    private var filesListInDir: MutableList<String> = ArrayList()
-
-    /**
-     * This method zips the directory
-     * @param dir
-     * @param zipDirName
-     */
-    fun zipDirectory(dir: File, zipDirName: String): Boolean {
-        var ok = false
-        try {
-            populateFilesList(dir)
-            //now zip files one by one
-            //create ZipOutputStream to write to the zip file
-            val fos = FileOutputStream(zipDirName)
-            val zos = ZipOutputStream(fos)
-            for (filePath in filesListInDir) {
-                //for ZipEntry we need to keep only relative file path, so we used substring on absolute path
-                val ze = ZipEntry(filePath.substring(dir.absolutePath.length + 1, filePath.length))
-                zos.putNextEntry(ze)
-                //read the file and write to ZipOutputStream
-                val fis = FileInputStream(filePath)
-                val buffer = ByteArray(1024)
-                var len: Int = fis.read(buffer)
-                while (len  > 0) {
-                    zos.write(buffer, 0, len)
-                    len = fis.read(buffer)
-                }
-                zos.closeEntry()
-                fis.close()
-                ok = true
-            }
-            zos.close()
-            fos.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        return ok
-    }
-
-    /**
-     * This method populates all the files in a directory to a List
-     * @param dir
-     * @throws IOException
-     */
-    @Throws(IOException::class)
-    private fun populateFilesList(dir: File) {
-        val files = dir.listFiles()
-        for (file in files!!) {
-            if (file.isFile)
-                filesListInDir.add(file.absolutePath)
-            else
-                populateFilesList(file)
-        }
-    }
-
     companion object {
+
+        /**
+         * This method populates all the files in a directory to a List
+         * @param dir
+         * @throws IOException
+         */
+        @Throws(IOException::class)
+        fun populateFilesList(dir: File): MutableList<String> {
+            val filesListInDir: MutableList<String> = ArrayList()
+            val files = dir.listFiles()
+            for (file in files!!) {
+                if (file.isFile)
+                    filesListInDir.add(file.absolutePath)
+                else
+                    filesListInDir.addAll(populateFilesList(file))
+            }
+            return filesListInDir
+        }
+
+
 
         /**
          * This method compresses the single file to zip format
@@ -111,6 +75,45 @@ class Zip {
 
             return ok
         }
+
+        /**
+         * This method zips the directory
+         * @param dir
+         * @param zipDirName
+         */
+        fun zipDirectory(dir: File, zipDirName: String): Boolean {
+            var ok = false
+            try {
+
+                //now zip files one by one
+                //create ZipOutputStream to write to the zip file
+                val fos = FileOutputStream(zipDirName)
+                val zos = ZipOutputStream(fos)
+                for (filePath in populateFilesList(dir)) {
+                    //for ZipEntry we need to keep only relative file path, so we used substring on absolute path
+                    val ze = ZipEntry(filePath.substring(dir.absolutePath.length + 1, filePath.length))
+                    zos.putNextEntry(ze)
+                    //read the file and write to ZipOutputStream
+                    val fis = FileInputStream(filePath)
+                    val buffer = ByteArray(1024)
+                    var len: Int = fis.read(buffer)
+                    while (len  > 0) {
+                        zos.write(buffer, 0, len)
+                        len = fis.read(buffer)
+                    }
+                    zos.closeEntry()
+                    fis.close()
+                    ok = true
+                }
+                zos.close()
+                fos.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+
+            return ok
+        }
+
 
         /**
          * This method unzip a zip file format

@@ -9,7 +9,7 @@
         <module name="zipfiles" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="zipfiles" target="1.5" />
     </bytecodeTargetLevel>
   </component>
