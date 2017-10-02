@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 
 class ZipTest {
 
-    //@Disabled
     @Test
     fun populateFilesListTest(){
         val dir = File(this.javaClass.getResource("/directory").path)
@@ -14,19 +13,28 @@ class ZipTest {
         val list = Zip.populateFilesList(dir)
 
         assertTrue(list.size > 0, "directorio con ficheros")
+        /*
+        assertTrue(list[0].equals("File1.txt"))
+        assertTrue(list[1].equals("File2.txt"))
+        assertTrue(list[2].equals("File3.txt"))
+        */
     }
 
-    @Disabled
     @Test
     fun zipSingleFileTest(){
 
-        assertTrue { if (1 == 0) true else false }
+        val sourceFile =  File(this.javaClass.getResource("/directory/File1.txt").file)
+        //val destFile = File(this.javaClass.getResource("/directory/zipped.zip").file)
+
+        assertTrue(Zip.zipSingleFile(sourceFile, "zipped_single.zip"))
+
 
     }
 
-    @Disabled
     @Test
     fun zipDirectoryTest(){
-        assertTrue(false, "falso!!")
+        val sourceDir =  File(this.javaClass.getResource("/directory/").file)
+        //val destFile = File(this.javaClass.getResource("/directory/zipped.zip").file)
+        assertTrue(Zip.zipDirectory(sourceDir, "zipped_dir.zip"))
     }
 }
