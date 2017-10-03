@@ -1,6 +1,5 @@
-import io.github.juanlucode.zipfiles.Zip
+import io.github.juanlucode.zip.Zip
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import java.io.File
 import org.junit.jupiter.api.Test
 

@@ -1,4 +1,4 @@
-package io.github.juanlucode.zipfiles
+package io.github.juanlucode.zip
 
 import java.io.File
 import java.io.FileInputStream
