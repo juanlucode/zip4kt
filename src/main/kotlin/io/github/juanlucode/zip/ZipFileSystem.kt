@@ -3,11 +3,17 @@ package io.github.juanlucode.zip
 import java.io.File
 import java.net.URI
 import java.nio.charset.Charset
-import java.nio.file.FileSystem
-import java.nio.file.FileSystems
+import java.util.*
+import java.nio.file.spi.FileSystemProvider
+import java.util.HashMap
+import sun.font.LayoutPathImpl.getPath
+import java.io.IOException
+import java.nio.file.*
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.*
+import sun.font.LayoutPathImpl.getPath
+
+
 
 
 // basado en:
@@ -26,45 +32,66 @@ import java.util.*
 
 // http://thinktibits.blogspot.com.es/2013/02/Java-NIO-ZIP-File-System-Provider-Example.html
 
+// http://fahdshariff.blogspot.com.es/2011/08/java-7-working-with-zip-files.html
+
+// http://www.java2s.com/Tutorials/Java/IO/Zip/Java_Tutorial_Zip.htm
+
 class ZipFileSystem {
 
     private val charset = Charset.forName("UTF-8")
     private var zipProperties: HashMap<String, String>
-    private var zipDisk: URI
+    private var zipDisk: URI? = null
     private var zipfs: FileSystem? = null
+    private var zipPath: Path? = null
 
     constructor(filename: String) {
 
 
         zipProperties = HashMap()
 
+        zipPath = Paths.get(filename)
 
-        if (Files.exists( Paths.get(filename))) {
+        if (Files.exists( zipPath )) {
             zipProperties!!.put("create", "false")
         } else {
             zipProperties!!.put("create", "true")
         }
 
-
         /* Specify the encoding as UTF -8 */
         zipProperties!!.put("encoding", "UTF-8");
 
         /* Specify the path to the ZIP File that you want to read as a File System */
-        zipDisk = URI.create("jar:file:${filename}")
 
-        zipfs = FileSystems.newFileSystem(zipDisk, zipProperties)
+
+
+        for (p in FileSystemProvider.installedProviders()) {
+            val s = p.scheme
+            if ("jar" == s || "zip".equals(s, ignoreCase = true)) {
+                zipDisk = URI.create("jar:file:" + zipPath!!.toUri().path)
+                zipfs = p.newFileSystem(zipDisk, zipProperties)
+            }
+        }
+
     }
+
 
     fun add(file: File): Boolean {
         var ok = false
 
         try {
+
             /* Create a Path in ZIP File */
-            val zipFilePath = zipfs!!.getPath(file.name)
+            val ZipFilePath = zipfs!!.getPath(file.name)
             /* Path where the file to be added resides */
-            val addNewFile = Paths.get(file.absolutePath)
             /* Append file to ZIP File */
-            Files.copy(addNewFile, zipFilePath)
+            Files.copy(file.toPath(), ZipFilePath)
+
+
+            /* Path where the file to be added resides */
+            //val addNewFile = Paths.get(file.absolutePath)
+            /* Append file to ZIP File */
+            // Files.copy(addNewFile, zipPath)
+            Files.copy(file.toPath(), zipPath)
             ok = true
         } catch (ex: Exception) {
             ex.printStackTrace()

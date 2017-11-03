@@ -8,7 +8,9 @@ class ZipFileSystemTest {
     @Test
     fun zip(){
 
-        val zipFileSystem = ZipFileSystem("./test.zip")
+        //val zipFileSystem = ZipFileSystem("test.zip")
+
+        val zipFileSystem = ZipFileSystem("test.zip")
 
         val sourceFile =  File(this.javaClass.getResource("/directory/File1.txt").file)
 
