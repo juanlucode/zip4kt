@@ -1,10 +1,12 @@
 import io.github.juanlucode.zip.ZipFileSystem
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import java.io.File
 import org.junit.jupiter.api.Test
 
 class ZipFileSystemTest {
 
+    @Disabled
     @Test
     fun zip(){
 
@@ -12,9 +14,13 @@ class ZipFileSystemTest {
 
         val zipFileSystem = ZipFileSystem("test.zip")
 
-        val sourceFile =  File(this.javaClass.getResource("/directory/File1.txt").file)
+        //val sourceFile =  File(this.javaClass.getResource("/directory/File1.txt").file)
 
-        zipFileSystem.add(sourceFile)
+        //val sourceFile2 = File(this.javaClass.getResource("/directory/File2.txt").file)
+
+
+        zipFileSystem.add(File("File1.txt"))
+        zipFileSystem.add(File("File2.txt"))
 
         /*
         val dir = File(this.javaClass.getResource("/directory").path)
@@ -30,21 +36,19 @@ class ZipFileSystemTest {
         */
     }
 
+    @Disabled
     @Test
-    fun zipSingleFileTest(){
+    fun delete(){
+        val zipFileSystem = ZipFileSystem("test.zip")
 
-        // val sourceFile =  File(this.javaClass.getResource("/directory/File1.txt").file)
-        //val destFile = File(this.javaClass.getResource("/directory/zipped.zip").file)
-
-        // assertTrue(ZipIo.zipSingleFile(sourceFile, "zipped_single.zip"))
-
+        zipFileSystem.delete("File1.txt")
 
     }
 
     @Test
-    fun zipDirectoryTest(){
-        // val sourceDir =  File(this.javaClass.getResource("/directory/").file)
-        //val destFile = File(this.javaClass.getResource("/directory/zipped.zip").file)
-        // assertTrue(ZipIo.zipDirectory(sourceDir, "zipped_dir.zip"))
+    fun extract(){
+        val zipFileSystem = ZipFileSystem("test.zip")
+
+        zipFileSystem.extract("File2.txt")
     }
 }
