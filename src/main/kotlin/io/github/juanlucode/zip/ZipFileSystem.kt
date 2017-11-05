@@ -3,17 +3,10 @@ package io.github.juanlucode.zip
 import java.io.File
 import java.net.URI
 import java.nio.charset.Charset
-import java.util.*
-import java.nio.file.spi.FileSystemProvider
 import java.util.HashMap
-import sun.font.LayoutPathImpl.getPath
-import java.io.IOException
 import java.nio.file.*
 import java.nio.file.Files
 import java.nio.file.Paths
-import sun.font.LayoutPathImpl.getPath
-
-
 
 
 // basado en:
@@ -44,20 +37,22 @@ class ZipFileSystem {
     private var zipfs: FileSystem? = null
     private var zipPath: Path? = null
 
-    constructor(filename: String) {
+    constructor(zipFile: File) {
 
 
         zipProperties = HashMap()
 
-        zipPath = Paths.get(filename)
+        zipPath = zipFile.toPath()
 
-
+        /*
         if (Files.exists( zipPath )) {
             zipProperties!!.put("create", "false")
         } else {
             zipProperties!!.put("create", "true")
         }
+        */
 
+        zipProperties!!.put("create", "false")
 
         /* Specify the encoding as UTF -8 */
         zipProperties.put("encoding", "UTF-8");
@@ -66,6 +61,7 @@ class ZipFileSystem {
 
         zipDisk = URI.create("jar:file:" + zipPath!!.toUri().path)
         zipfs = FileSystems.newFileSystem(zipDisk, zipProperties)
+
 
         /*
         for (p in FileSystemProvider.installedProviders()) {

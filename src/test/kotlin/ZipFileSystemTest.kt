@@ -6,13 +6,13 @@ import org.junit.jupiter.api.Test
 
 class ZipFileSystemTest {
 
-    @Disabled
+    //@Disabled
     @Test
     fun zip(){
 
         //val zipFileSystem = ZipFileSystem("test.zip")
 
-        val zipFileSystem = ZipFileSystem("test.zip")
+        val zipFileSystem = ZipFileSystem(File("test.zip"))
 
         //val sourceFile =  File(this.javaClass.getResource("/directory/File1.txt").file)
 
@@ -39,15 +39,16 @@ class ZipFileSystemTest {
     @Disabled
     @Test
     fun delete(){
-        val zipFileSystem = ZipFileSystem("test.zip")
+        val zipFileSystem = ZipFileSystem(File("test.zip"))
 
         zipFileSystem.delete("File1.txt")
 
     }
 
+    @Disabled
     @Test
     fun extract(){
-        val zipFileSystem = ZipFileSystem("test.zip")
+        val zipFileSystem = ZipFileSystem(File("test.zip"))
 
         zipFileSystem.extract("File2.txt")
     }
