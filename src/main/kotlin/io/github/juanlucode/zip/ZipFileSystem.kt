@@ -1,12 +1,12 @@
 package io.github.juanlucode.zip
 
+import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
 import java.io.File
 import java.net.URI
 import java.nio.charset.Charset
-import java.util.HashMap
 import java.nio.file.*
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.util.*
 
 
 // basado en:
@@ -34,7 +34,6 @@ class ZipFileSystem {
     private val charset = Charset.forName("UTF-8")
     private var zipProperties: HashMap<String, String>
     private var zipDisk: URI? = null
-    //private var zipfs: FileSystem? = null
     private var zipPath: Path? = null
 
     constructor(zipFile: File) {
@@ -64,7 +63,7 @@ class ZipFileSystem {
             val zipFilePath = zipfs!!.getPath(file.name)
             /* Path where the file to be added resides */
             /* Append file to ZIP File */
-            Files.copy(file.toPath(), zipFilePath)
+            Files.copy(file.toPath(), zipFilePath, StandardCopyOption.REPLACE_EXISTING)
 
             ok = true
         }
@@ -108,6 +107,22 @@ class ZipFileSystem {
     https://docs.oracle.com/javase/tutorial/essential/io/file.html
      */
 
+
+    fun read(fileInZip: String, _bufferedOutputStream: BufferedOutputStream): Boolean {
+        var ok = false
+
+        FileSystems.newFileSystem(zipDisk, zipProperties).use { zipfs ->
+            /* Path inside ZIP File */
+            val pathInZipfile = zipfs!!.getPath(fileInZip)
+            /* Extract file to disk */
+            Files.copy(pathInZipfile, _bufferedOutputStream)
+            ok = true
+        }
+
+        return ok
+    }
+
+
     fun read(fileInZip: String, _stringBuffer: StringBuffer): Boolean {
         var ok = false
 
@@ -125,6 +140,24 @@ class ZipFileSystem {
         }
 
         return ok
+    }
+
+
+    fun write(fileInZip: String, _inputStream: BufferedInputStream): Boolean {
+        var ok = false
+
+        FileSystems.newFileSystem(zipDisk, zipProperties).use { zipfs ->
+
+            /* Create a Path in ZIP File */
+            val zipFilePath = zipfs!!.getPath(fileInZip)
+            /* Path where the file to be added resides */
+            /* Append file to ZIP File */
+            Files.copy(_inputStream, zipFilePath, StandardCopyOption.REPLACE_EXISTING)
+
+            ok = true
+        }
+        return ok
+
     }
 
     fun write(fileInZip: String, _stringBuffer: StringBuffer): Boolean {
