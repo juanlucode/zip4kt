@@ -34,7 +34,7 @@ class ZipFileSystem {
     private val charset = Charset.forName("UTF-8")
     private var zipProperties: HashMap<String, String>
     private var zipDisk: URI? = null
-    private var zipfs: FileSystem? = null
+    //private var zipfs: FileSystem? = null
     private var zipPath: Path? = null
 
     constructor(zipFile: File) {
@@ -44,34 +44,13 @@ class ZipFileSystem {
 
         zipPath = zipFile.toPath()
 
-        /*
-        if (Files.exists( zipPath )) {
-            zipProperties!!.put("create", "false")
-        } else {
-            zipProperties!!.put("create", "true")
-        }
-        */
-
         zipProperties!!.put("create", "false")
 
         /* Specify the encoding as UTF -8 */
         zipProperties.put("encoding", "UTF-8");
 
         /* Specify the path to the ZIP File that you want to read as a File System */
-
         zipDisk = URI.create("jar:file:" + zipPath!!.toUri().path)
-        zipfs = FileSystems.newFileSystem(zipDisk, zipProperties)
-
-
-        /*
-        for (p in FileSystemProvider.installedProviders()) {
-            val s = p.scheme
-            if ("jar" == s || "zip".equals(s, ignoreCase = true)) {
-                zipDisk = URI.create("jar:file:" + zipPath!!.toUri().path)
-                zipfs = p.newFileSystem(zipDisk, zipProperties)
-            }
-        }
-        */
 
     }
 
@@ -79,7 +58,7 @@ class ZipFileSystem {
     fun add(file: File): Boolean {
         var ok = false
 
-        zipfs.use {
+        FileSystems.newFileSystem(zipDisk, zipProperties).use { zipfs ->
 
             /* Create a Path in ZIP File */
             val zipFilePath = zipfs!!.getPath(file.name)
@@ -95,7 +74,7 @@ class ZipFileSystem {
     fun delete(fileInZip: String): Boolean {
         var ok = false
 
-        zipfs.use {
+        FileSystems.newFileSystem(zipDisk, zipProperties).use { zipfs ->
             /* Get the Path inside ZIP File to delete the ZIP Entry */
             val pathInZipfile = zipfs!!.getPath(fileInZip)
             /* Execute Delete */
@@ -108,9 +87,8 @@ class ZipFileSystem {
     fun extract(fileInZip: String, dir: String = "."): Boolean {
         var ok = false
 
-        zipfs.use {
+        FileSystems.newFileSystem(zipDisk, zipProperties).use { zipfs ->
             /* Path inside ZIP File */
-            //val pathInZipfile = Paths.get(fileInZip)
             val pathInZipfile = zipfs!!.getPath(fileInZip)
             /* Path to extract the file to  */
             val fileOutZip = Paths.get(dir + File.separator + fileInZip)
@@ -133,20 +111,7 @@ class ZipFileSystem {
     fun read(fileInZip: String, _stringBuffer: StringBuffer): Boolean {
         var ok = false
 
-        /*
-        try {
-            val pathInZipfile = zipfs!!.getPath(fileInZip)
-            var fileArray: ByteArray
-            fileArray = Files.readAllBytes(pathInZipfile);
-            _stringBuffer.delete(0, _stringBuffer.length)
-            _stringBuffer.append(fileArray)
-            ok = true
-        } catch (ex: Exception){
-            ex.printStackTrace()
-        }
-        */
-
-        zipfs.use {
+        FileSystems.newFileSystem(zipDisk, zipProperties).use { zipfs ->
             val pathInZipfile = zipfs!!.getPath(fileInZip)
 
             _stringBuffer.delete(0, _stringBuffer.length)
@@ -164,20 +129,7 @@ class ZipFileSystem {
 
     fun write(fileInZip: String, _stringBuffer: StringBuffer): Boolean {
         var ok = false
-
-        /*
-        try {
-            val pathInZipFile = zipfs!!.getPath(fileInZip)
-            val buf: ByteArray = _stringBuffer.toString().toByteArray()
-            Files.write(pathInZipFile, buf);
-            ok = true
-        } catch (ex: Exception){
-            ex.printStackTrace()
-        }
-        */
-
-
-        zipfs.use {
+        FileSystems.newFileSystem(zipDisk, zipProperties).use { zipfs ->
             val pathInZipfile = zipfs!!.getPath(fileInZip)
             val writer = Files.newBufferedWriter(pathInZipfile, charset)
             writer.write(_stringBuffer.toString(), 0, _stringBuffer.length);
