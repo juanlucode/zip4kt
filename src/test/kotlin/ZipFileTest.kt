@@ -1,16 +1,15 @@
-import io.github.juanlucode.zip.ZipFileSystem
-import org.junit.jupiter.api.Assertions.assertTrue
+import io.github.juanlucode.zip.ZipFile
 import org.junit.jupiter.api.Disabled
 import java.io.File
 import org.junit.jupiter.api.Test
 
-class ZipFileSystemTest {
+class ZipFileTest {
 
     //@Disabled
     @Test
     fun zip(){
 
-        val zipFileSystem = ZipFileSystem(File("test.zip"))
+        val zipFileSystem = ZipFile(File("test.zip"))
 
         //zipFileSystem.add(File("File1.txt"))
         zipFileSystem.add(File("File2.txt"))
@@ -20,7 +19,7 @@ class ZipFileSystemTest {
     @Disabled
     @Test
     fun delete(){
-        val zipFileSystem = ZipFileSystem(File("test.zip"))
+        val zipFileSystem = ZipFile(File("test.zip"))
 
         zipFileSystem.delete("File1.txt")
 
@@ -29,7 +28,7 @@ class ZipFileSystemTest {
     @Disabled
     @Test
     fun extract(){
-        val zipFileSystem = ZipFileSystem(File("test.zip"))
+        val zipFileSystem = ZipFile(File("test.zip"))
 
         zipFileSystem.extract("File2.txt")
     }

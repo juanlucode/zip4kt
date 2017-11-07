@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/zip4kt.iml" filepath="$PROJECT_DIR$/.idea/zip4kt.iml" />
       <module fileurl="file://$PROJECT_DIR$/zip4kt.iml" filepath="$PROJECT_DIR$/zip4kt.iml" />
     </modules>
   </component>

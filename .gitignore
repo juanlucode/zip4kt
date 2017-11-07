@@ -44,3 +44,6 @@ hs_err_pid*
 
 .gitignore
 target/
+
+src/main/resources/
+src/test/java/
