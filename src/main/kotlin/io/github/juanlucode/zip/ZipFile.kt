@@ -43,13 +43,19 @@ class ZipFile {
 
         zipPath = zipFile.toPath()
 
-        zipProperties.put("create", "false")
+        /* Specify the path to the ZIP File that you want to read as a File System */
+        zipDisk = URI.create("jar:file:" + zipPath!!.toUri().path)
 
         /* Specify the encoding as UTF -8 */
         zipProperties.put("encoding", "UTF-8")
 
-        /* Specify the path to the ZIP File that you want to read as a File System */
-        zipDisk = URI.create("jar:file:" + zipPath!!.toUri().path)
+        // If file doesn't exist, then create it
+        if ( ! Files.exists(zipPath)) {
+            zipProperties.put("create", "true")
+            FileSystems.newFileSystem(zipDisk, zipProperties).use{}
+        }
+
+        zipProperties.put("create", "false")
 
     }
 
