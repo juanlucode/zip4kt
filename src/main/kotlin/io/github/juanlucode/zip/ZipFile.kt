@@ -195,7 +195,9 @@ class ZipFile {
             FileSystems.newFileSystem(zipDisk, zipProperties).use { zipfs ->
                 val pathInZipfile = zipfs!!.getPath(fileInZip)
                 val writer = Files.newBufferedWriter(pathInZipfile, charset)
-                writer.write(_stringBuffer.toString(), 0, _stringBuffer.length)
+                writer.write(_stringBuffer.toString())
+                writer.flush()
+                writer.close()
                 ok = true
             }
         } catch (ex: Exception){
