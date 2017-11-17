@@ -2,10 +2,25 @@ import io.github.juanlucode.zip.ZipFile
 import org.junit.jupiter.api.Disabled
 import java.io.File
 import org.junit.jupiter.api.Test
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 class ZipFileTest {
 
-    //@Disabled
+
+    @Test
+    fun read(){
+        val zipFileSystem = ZipFile(File("2080.modelo.zip"))
+
+        val _stringBuffer = StringBuffer()
+
+        zipFileSystem.read("Modelo2080V1PA.xml", _stringBuffer,  StandardCharsets.ISO_8859_1)
+        print("Prueba read...")
+        print(_stringBuffer)
+
+    }
+
+    @Disabled
     @Test
     fun zip(){
 

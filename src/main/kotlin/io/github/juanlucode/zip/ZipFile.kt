@@ -5,6 +5,7 @@ import java.io.BufferedOutputStream
 import java.io.File
 import java.net.URI
 import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 import java.nio.file.*
 import java.util.*
 
@@ -31,7 +32,7 @@ import java.util.*
 
 class ZipFile {
 
-    private val charset = Charset.forName("UTF-8")
+    private val charset = Charset.forName("utf-8")
     private var zipProperties: HashMap<String, String>
     private var zipDisk: URI? = null
     private var zipPath: Path? = null
@@ -46,8 +47,8 @@ class ZipFile {
         /* Specify the path to the ZIP File that you want to read as a File System */
         zipDisk = URI.create("jar:file:" + zipPath!!.toUri().path)
 
-        /* Specify the encoding as UTF -8 */
-        zipProperties.put("encoding", "UTF-8")
+        /* Specify the encoding as default ( = UTF -8) */
+        zipProperties.put("encoding", charset.name())
 
         // If file doesn't exist, then create it
         if ( ! Files.exists(zipPath)) {
@@ -64,6 +65,7 @@ class ZipFile {
         var ok = false
 
         try {
+
             FileSystems.newFileSystem(zipDisk, zipProperties).use { zipfs ->
 
                 /* Create a Path in ZIP File */
@@ -143,7 +145,7 @@ class ZipFile {
     }
 
 
-    fun read(fileInZip: String, _stringBuffer: StringBuffer): Boolean {
+    fun read(fileInZip: String, _stringBuffer: StringBuffer, fileCharset: Charset = charset): Boolean {
         var ok = false
 
         try {
@@ -151,7 +153,7 @@ class ZipFile {
                 val pathInZipfile = zipfs!!.getPath(fileInZip)
 
                 _stringBuffer.delete(0, _stringBuffer.length)
-                Files.newBufferedReader(pathInZipfile, charset).use { reader ->
+                Files.newBufferedReader(pathInZipfile, fileCharset).use { reader ->
                     var line: String?
                     line = reader.readLine()
                     while (line != null) {
@@ -189,7 +191,7 @@ class ZipFile {
 
     }
 
-    fun write(fileInZip: String, _stringBuffer: StringBuffer): Boolean {
+    fun write(fileInZip: String, _stringBuffer: StringBuffer, fileCharset: Charset = charset): Boolean {
         var ok = false
         try {
             FileSystems.newFileSystem(zipDisk, zipProperties).use { zipfs ->
