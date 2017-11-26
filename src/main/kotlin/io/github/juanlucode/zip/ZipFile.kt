@@ -196,6 +196,8 @@ class ZipFile {
         try {
             FileSystems.newFileSystem(zipDisk, zipProperties).use { zipfs ->
                 val pathInZipfile = zipfs!!.getPath(fileInZip)
+                // overwriting
+                java.nio.file.Files.deleteIfExists(pathInZipfile)
                 val writer = Files.newBufferedWriter(pathInZipfile, charset)
                 writer.write(_stringBuffer.toString())
                 writer.flush()
