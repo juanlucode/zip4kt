@@ -209,4 +209,19 @@ class ZipFile {
         }
         return ok
     }
+
+    fun exists(fileInZip: String): Boolean {
+        var ok = false
+        try{
+            FileSystems.newFileSystem(zipDisk, zipProperties).use { zipfs ->
+                val pathInZipfile = zipfs!!.getPath(fileInZip)
+                ok = Files.exists(pathInZipfile)
+            }
+
+        } catch (ex: Exception){
+            ex.printStackTrace()
+        }
+
+        return ok
+    }
 }
