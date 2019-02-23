@@ -157,7 +157,7 @@ class ZipFile {
                     var line: String?
                     line = reader.readLine()
                     while (line != null) {
-                        _stringBuffer.append(line)
+                        _stringBuffer.appendln(line)
                         line = reader.readLine()
                     }
                 }
